@@ -1,0 +1,63 @@
+{% extends "entrepreneurs/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Создание счёта</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header">Информация о заказчике</div>
+            <div class="card-body">
+                {{ form.as_p }}
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">Позиции счёта</div>
+            <div class="card-body">
+                {{ formset.management_form }}
+                <div id="items-container">
+                    {% for form in formset %}
+                    {% include 'include/invoice_form.html' with form=form %}
+
+                </div>
+                {% endfor %}
+            
+                <button type="button" class="btn btn-secondary mt-3" id="add-item">Добавить позицию</button>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Предпросмотр</button>
+    </form>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addButton = document.getElementById('add-item')
+
+        addButton.addEventListener('click', async function() {
+            const div = document.createElement('div')
+            fetch('get-form/', {
+                method: 'GET'
+            })
+            .then(response => response.text())
+            .then(html => {
+                div.innerHTML = html
+                document.getElementById('items-container').append(div)
+                
+                const totalForms = document.getElementById('id_form-TOTAL_FORMS')
+                totalForms.value = parseInt(totalForms.value) + 1
+            })
+        })
+    })
+
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.matches('[name$="-DELETE"]')) {
+            e.target.closest('.item-form').style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* Стили для подтверждения удаления */
+.delete-confirm-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.delete-confirm-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    border-top: 4px solid #e74c3c;
+}
+
+.delete-confirm-title {
+    color: #e74c3c;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.delete-confirm-content {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.delete-idea-info {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.delete-idea-info p {
+    margin-bottom: 0.5rem;
+}
+
+.delete-confirm-form .btn-danger {
+    padding: 0.75rem 1.5rem;
+    background-color: #e74c3c;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.delete-confirm-form .btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Адаптация для мобильных */
+@media (max-width: 576px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions a,
+    .form-actions button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+
+<div class="delete-confirm-container">
+    <div class="delete-confirm-card">
+        <h2 class="delete-confirm-title">Подтверждение удаления</h2>
+        
+        <div class="delete-confirm-content">
+            <p>Вы действительно хотите удалить идею <strong>"{{ idea.title }}"</strong>?</p>
+            <p class="text-muted">Это действие нельзя будет отменить.</p>
+            
+            <div class="delete-idea-info">
+                <p><strong>Создана:</strong> {{ idea.created_at|date:"d.m.Y H:i" }}</p>
+                {% if idea.business_plan %}
+                <p><strong>Бизнес-план:</strong> {{ idea.business_plan.name }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <form method="post" class="delete-confirm-form">
+            {% csrf_token %}
+            <div class="form-actions">
+                <a href="{% url 'investment:idea' idea.id %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Отмена
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Удалить навсегда
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
